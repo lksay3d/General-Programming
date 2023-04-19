@@ -9,12 +9,14 @@
 
 using namespace std;
 
-struct priorityData {
+struct priorityData
+{
     string dataValue;
     int priorityValue;
 };
 
-class ArrayHeap {
+class ArrayHeap
+{
 protected:
     priorityData* heap;
     int capacity;
@@ -91,70 +93,96 @@ public:
     }
 };
 
-class PriorityQueue : public ArrayHeap {
+class PriorityQueue : public ArrayHeap
+{
 public:
     PriorityQueue() : ArrayHeap() {}
 
     PriorityQueue(int capacity) : ArrayHeap(capacity) {}
 
-    void insert(priorityData elem) {
+    void insert(priorityData elem)
+    {
         addElement(elem);
     }
 
-    priorityData remove() {
+    priorityData remove()
+    {
         return removeMin();
     }
 
-    priorityData returnHighest() {
+    priorityData returnHighest()
+    {
         return returnMin();
     }
 
-    string toString() {
-        if (size == 0) {
+    string toString()
+    {
+        if (size == 0)
+        {
             return "[PriorityQueue is empty]";
         }
+        
         stringstream ss;
         ss << "[";
-        for (int i = 1; i <= size; i++) {
+        
+        for (int i = 1; i <= size; i++)
+        {
             ss << "(\"" << heap[i].dataValue << "\", " << heap[i].priorityValue << ")";
-            if (i < size) {
+            
+            if (i < size)
+            {
                 ss << "; ";
             }
         }
+        
         ss << "]";
         return ss.str();
     }
 
 private:
-    void addElement(priorityData elem) {
-        if (size == capacity - 1) {
+    void addElement(priorityData elem)
+    {
+        if (size == capacity - 1)
+        {
             resizeHeap();
         }
+        
         size++;
+        
         int i = size;
         heap[i] = elem;
 
-        while (i > 1 && heap[parent(i)].priorityValue > heap[i].priorityValue) {
+        while (i > 1 && heap[parent(i)].priorityValue > heap[i].priorityValue)
+        {
             swap(heap[i], heap[parent(i)]);
             i = parent(i);
         }
     }
 
-    priorityData removeMin() {
-        if (size == 0) {
+    priorityData removeMin()
+    {
+        if (size == 0)
+        {
             throw underflow_error("Attempt to remove or return element from empty heap.");
         }
+        
         priorityData minElem = heap[1];
+        
         heap[1] = heap[size];
         size--;
+        
         minHeapify(1);
+        
         return minElem;
     }
 
-    priorityData returnMin() {
-        if (size == 0) {
+    priorityData returnMin()
+    {
+        if (size == 0)
+        {
             throw underflow_error("Attempt to remove or return element from empty heap.");
         }
+        
         return heap[1];
     }
 };
