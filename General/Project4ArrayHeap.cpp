@@ -6,6 +6,8 @@
 #include <string>
 #include <stdexcept>
 #include <sstream>
+#include <fstream>
+
 
 using namespace std;
 
@@ -138,6 +140,34 @@ public:
         ss << "]";
         return ss.str();
     }
+    
+    void loadFile(const string &fileName)
+    {
+        ifstream inputFile(fileName);
+        
+        if(!inputFile)
+        {
+            cerr << "Unable to open file: " << fileName << endl;
+            return;
+        }
+        
+        priorityData elem;
+        
+        while(inputFile >> elem.dataValue >> elem.priorityValue)
+        {
+            insert(elem);
+        }
+        
+        inputFile.close();
+    }
+    
+    void buildHeap()
+    {
+        for(int i = size/2; i >= 1; i--)
+        {
+            minHeapify(i);
+        }
+    }
 
 private:
     void addElement(priorityData elem)
@@ -194,4 +224,14 @@ int main() {
     pq.insert({"third", 3});
 
     cout << pq.toString() << endl;
+    
+    priorityData highestPriorityElem = pq.remove();
+    cout << "Removed element: (\"" << highestPriorityElem.dataValue << "\", " << highestPriorityElem.priorityValue << ")\n";
 
+    cout << pq.toString() << endl;
+
+    priorityData highestPriority = pq.returnHighest();
+    cout << "Highest priority element: (\"" << highestPriority.dataValue << "\", " << highestPriority.priorityValue << ")\n";
+
+    return 0;
+}
