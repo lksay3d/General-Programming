@@ -217,21 +217,107 @@ private:
     }
 };
 
-int main() {
-    PriorityQueue pq;
-    pq.insert({"first", 1});
-    pq.insert({"second", 2});
-    pq.insert({"third", 3});
-
-    cout << pq.toString() << endl;
+void processUserActions(PriorityQueue &queue, istream &inputStream, ostream &outputStream)
+{
+    string action;
     
-    priorityData highestPriorityElem = pq.remove();
-    cout << "Removed element: (\"" << highestPriorityElem.dataValue << "\", " << highestPriorityElem.priorityValue << ")\n";
+    while(inputStream >> action)
+    {
+        if(action == "insert")
+        {
+            priorityData elem;
+            
+            inputStream >> elem.dataValue >> elem.priorityValue;
+            
+            queue.insert(elem);
+        }
+        
+        else if(action == "see_top")
+        {
+            priorityData highestPriority = queue.returnHighest();
+            outputStream << "Highest priority element: (\"" << highestPriority.dataValue << "\", " << highestPriority.priorityValue << ")\n";
+        }
+        
+        else if(action == "remove_top")
+        {
+            priorityData removedElem = queue.remove();
+            outputStream << "Remove element: (\"" << removedElem.dataValue << "\", " << removedElem.priorityValue << ")\n";
+        }
+        
+        else if(action == "display")
+        {
+            outputStream << queue.toString() << endl;
+        }
+    }
+}
 
-    cout << pq.toString() << endl;
-
-    priorityData highestPriority = pq.returnHighest();
-    cout << "Highest priority element: (\"" << highestPriority.dataValue << "\", " << highestPriority.priorityValue << ")\n";
-
-    return 0;
+int main()
+{
+    int capacity;
+    
+    cout << "Enter the capacity of the priority queue (or 0 for default capacity of 10)";
+    cin >> capacity;
+    
+    PriorityQueue queue = (capacity == 0) ? PriorityQueue(): PriorityQueue(capacity);
+    
+    string initialFileName;
+    
+    cout << "Enter the name of the initial input file (including .txt; or 'empty' for an empty file): ";
+    cin >> initialFileName;
+    
+    if(initialFileName != "empty")
+    {
+        queue.loadFile(initialFileName);
+        queue.buildHeap();
+    }
+    
+    string actionSource;
+    cout << "Will you be taking actions from the user, file, or both?";
+    cin >> actionSource;
+    
+    string actionFileName;
+    
+    if(actionSource == "file" || actionSource == "both")
+    {
+        cout << "Enter the name of the action input file (including .txt): ";
+        cin >> actionFileName;
+        
+        ifstream actionFile(actionFileName);
+        
+        if(actionFile)
+        {
+            processUserActions(queue, actionFile, cout);
+            actionFile.close();
+        }
+        
+        else
+        {
+            cerr << "Unable to open file: " << actionFileName << endl;
+        }
+        
+        if(actionSource == "user" || actionSource == "both")
+        {
+            cout << "Enter user actions (insert, see_top, remove_top, display, or quit): " << endl;
+            processUserActions(queue, cin, cout);
+        }
+        
+        string outputFileName;
+        cout << "Enter the name of the output file (including .txt): ";
+        cin >> outputFileName;
+        
+        ofstream outputFile(outputFileName);
+        
+        if(outputFile)
+        {
+            outputFile << queue.toString() << endl;
+            outputFile.close();
+        }
+        
+        else
+        {
+            cerr << "Unable to open file: " << outputFileName << endl;
+        }
+        
+        return 0;
+    }
 }
