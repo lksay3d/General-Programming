@@ -223,28 +223,33 @@ void processUserActions(PriorityQueue &queue, istream &inputStream, ostream &out
     
     while(inputStream >> action)
     {
-        if(action == "insert")
+        if(action == "I")
         {
             priorityData elem;
             
-            inputStream >> elem.dataValue >> elem.priorityValue;
+            inputStream >> ws; //(ignoring whitespace)
+            
+            getline(inputStream, elem.dataValue, '\"');
+            inputStream >> elem.priorityValue;
             
             queue.insert(elem);
+            
+            outputStream << "Inserted: (\"" << elem.dataValue << "\", " << elem.priorityValue << ")\n";
         }
         
-        else if(action == "see_top")
+        else if(action == "S")
         {
             priorityData highestPriority = queue.returnHighest();
             outputStream << "Highest priority element: (\"" << highestPriority.dataValue << "\", " << highestPriority.priorityValue << ")\n";
         }
         
-        else if(action == "remove_top")
+        else if(action == "R")
         {
             priorityData removedElem = queue.remove();
             outputStream << "Remove element: (\"" << removedElem.dataValue << "\", " << removedElem.priorityValue << ")\n";
         }
         
-        else if(action == "display")
+        else if(action == "A")
         {
             outputStream << queue.toString() << endl;
         }
@@ -297,7 +302,7 @@ int main()
         
         if(actionSource == "user" || actionSource == "both")
         {
-            cout << "Enter user actions (insert, see_top, remove_top, display, or quit): " << endl;
+            cout << "Enter user actions (I[nsert], R[emove], S[ee top element], A[ll items in string], or quit): " << endl;
             processUserActions(queue, cin, cout);
         }
         
